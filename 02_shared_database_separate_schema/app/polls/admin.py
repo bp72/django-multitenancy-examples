@@ -1,10 +1,5 @@
 from django.contrib import admin
-from .models import Tenant, Question, Choice
-
-
-@admin.register(Tenant)
-class TenantAdmin(admin.ModelAdmin):
-    ...
+from .models import Question, Choice
 
 
 @admin.register(Question)
