@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app/:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./app/.env.docker
+    depends_on:
+      - db
+      - migrate
+  migrate:
+    build: ./app
+    command: python manage.py migrate
+    volumes:
+      - ./app/:/usr/src/app/
+    env_file:
+      - ./app/.env.docker
+    depends_on:
+      - db
+  createsupersuser:
+    build: ./app
+    command: python manage.py createsuperuser --noinput
+    env_file:
+      - ./app/.env.docker
+    volumes:
+      - ./app/:/usr/src/app/
+    depends_on:
+      - db
+      - migrate
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=separate_schema
+      - POSTGRES_PASSWORD=separate_schema
+      - POSTGRES_DB=separate_schema
+
+volumes:
+  postgres_data:
